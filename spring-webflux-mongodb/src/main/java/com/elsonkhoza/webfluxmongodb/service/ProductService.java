@@ -22,6 +22,12 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    /**
+     * Find products between a price a range
+     * @param minPrice minimum price
+     * @param maxPrice maximum price
+     * @return a flux of products between the given price range
+     */
     public Flux<Product> findProductBetweenPriceRange(Double minPrice, Double maxPrice) {
         return productRepository.findByPriceBetween(
                 Range.closed(minPrice, maxPrice)

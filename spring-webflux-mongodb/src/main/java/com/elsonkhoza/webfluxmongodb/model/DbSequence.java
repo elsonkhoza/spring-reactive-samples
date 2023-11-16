@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collation = "db_sequences")
+@Document(collection = "db_sequences")
 public class DbSequence {
 
     @Id
