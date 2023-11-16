@@ -22,7 +22,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Flux<Product> findProductOfPriceBetween(Double minPrice, Double maxPrice) {
+    public Flux<Product> findProductBetweenPriceRange(Double minPrice, Double maxPrice) {
         return productRepository.findByPriceBetween(
                 Range.closed(minPrice, maxPrice)
         );
