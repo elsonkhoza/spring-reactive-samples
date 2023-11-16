@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>spring-webflux-mongodb</module>
+        <module>spring-webflux-functional-endpoints</module>
     </modules>
 
     <properties>
