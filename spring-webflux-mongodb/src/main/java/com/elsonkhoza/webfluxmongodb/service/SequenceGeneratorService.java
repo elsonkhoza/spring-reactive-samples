@@ -2,14 +2,15 @@ package com.elsonkhoza.webfluxmongodb.service;
 
 import com.elsonkhoza.webfluxmongodb.model.DbSequence;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
 
@@ -18,24 +19,31 @@ import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
 public class SequenceGeneratorService {
 
     @Autowired
-    private MongoOperations mongoOperations;
+    private ReactiveMongoOperations mongoOperations;
 
-    public long getSequenceNumber(String sequenceName){
+    public long getSequenceNumber(String sequenceName) {
 
         // Get the sequence query
-        Query query=new Query(Criteria.where("id").is(sequenceName));
+        Query query = new Query(Criteria.where("id").is(sequenceName));
         // Update operation
-        Update update=new Update().inc("sequenceNumber",1);
+        Update update = new Update().inc("sequenceNumber", 1);
 
-        DbSequence counter=mongoOperations
+        Mono<DbSequence> counter = mongoOperations
                 .findAndModify(
                         query,
                         update,
                         options().returnNew(true).upsert(true),
                         DbSequence.class
                 );
+        long counterValue = 1;
+        try {
+            DbSequence dbSequence = counter.toFuture().get();
+            counterValue = !Objects.isNull(dbSequence) ? dbSequence.getSequenceNumber() : 1;
+        } catch (ExecutionException | InterruptedException i) {
+            System.out.println(i.getMessage());
+        }
 
-        return !Objects.isNull(counter)? counter.getSequenceNumber():1;
+        return counterValue;
 
     }
 }
