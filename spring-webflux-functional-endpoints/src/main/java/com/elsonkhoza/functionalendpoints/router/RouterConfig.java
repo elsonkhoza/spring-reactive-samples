@@ -17,7 +17,8 @@ public class RouterConfig {
     @Bean
     public RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.route()
-                .POST("router/",productHandler::createProduct)
+                .POST("/router",productHandler::createProduct)
+                .GET("/router/products",productHandler::getAllProducts)
                 .build();
     }
 }
